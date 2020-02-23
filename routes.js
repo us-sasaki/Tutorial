@@ -20,5 +20,11 @@ module.exports = function(app) {
             "PORT" : process.env.PORT
         });
     });
+
+    const IMAGE_FILE = "/images/kesiki2003_8_30.jpg";
+    // static image
+    app.route(IMAGE_FILE).get( (req, res) => {
+        res.sendFile(IMAGE_FILE, { root: __dirname })
+    });
 };
 
