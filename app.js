@@ -9,6 +9,12 @@ routes(app);
 
 // Server listening on port 80
 app.use(express.json());
-app.listen(process.env.PORT || 8080);
-console.log(`node-uslineapp started on port `);
+const port = process.env.PORT || 8080;
+const server = app.listen(port);
+
+// set Websocket server
+const websock = require("./websock");
+websock(server);
+
+console.log(`node-uslineapp started on port `+port);
 

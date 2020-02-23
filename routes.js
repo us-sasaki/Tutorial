@@ -21,10 +21,12 @@ module.exports = function(app) {
         });
     });
 
-    const IMAGE_FILE = "/images/kesiki2003_8_30.jpg";
+    const STATIC_FILES = ["/html/index.html", "/images/kesiki2003_8_30.jpg"];
     // static image
-    app.route(IMAGE_FILE).get( (req, res) => {
-        res.sendFile(IMAGE_FILE, { root: __dirname })
+    STATIC_FILES.forEach( (loc) => {
+        app.route(loc).get( (req, res) => {
+            res.sendFile(loc, { root: __dirname })
+        });
     });
 };
 
