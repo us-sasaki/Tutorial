@@ -2,7 +2,7 @@
 
 module.exports = function(server) {
     /**
-     * WebSocket サービス
+     * WebSocket サーバー設定
      */
     const { Server } = require('ws');
     console.log("server="+server);

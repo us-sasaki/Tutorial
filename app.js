@@ -4,8 +4,8 @@ const express = require("express");
 const app = express();
 
 // Application endpoints
-const routes = require("./routes");
-routes(app);
+const Routes = require("./routes");
+const routes = new Routes(app);
 
 // Server listening on port 80
 app.use(express.json());
