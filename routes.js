@@ -3,6 +3,7 @@
 const path = require('path');
 const multer = require('multer');
 const ALLOWED_FILETYPE = ["html", "jpg"];
+const { promisify } = require('util');
 
 /**
  * サービスを設定
@@ -14,7 +15,9 @@ module.exports = class {
  */
     constructor(app) {
         this.app = app;
+        this.websocket = null;
         
+        // for test
         app.route("/").get(function(req, res) {
             res.json( { message: {name: "value"}});
         });
@@ -58,6 +61,15 @@ module.exports = class {
             }
         });
 
+        // websock receiver
+        app.route('/notify').post( (req, res) => {
+            if (this.websocket !== null) this.websocket.notify(JSON.stringify(req.body));
+            // websocket から messageReceived が呼ばれたら post の response として返却
+            // promisify で Promise にして async, await する
+            res.json({response: "response"});
+
+        });
+
     }
 
 /*------------------
@@ -75,6 +87,19 @@ module.exports = class {
             res.sendFile(p, { root: __dirname })
         });
         return true;
+    }
+
+    setWebSocket(websocket) {
+        this.websocket = websocket;
+    }
+
+    /**
+     * WebSocket からメッセージを受信したときに非同期に呼ばれます
+     * 
+     * @param {string} message 
+     */
+    messageReceived(message) {
+        console.log("received: "+message);
     }
 
 };
