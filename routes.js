@@ -74,6 +74,9 @@ module.exports = class {
                 res.json({response: JSON.parse(msg)});
             }
         });
+        app.route('/notify').get( (req, res) => {
+            res.json({});
+        });
 
     }
 
