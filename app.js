@@ -8,6 +8,7 @@ const Websock = require("./websock");
 const app = express();
 
 // Server listening on port 80
+app.use(express.static('public'));
 app.use(express.json());
 //app.use(express.urlencoded({ extended: true }));
 

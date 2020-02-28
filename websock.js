@@ -2,6 +2,9 @@
 
 const { Server } = require('ws');
 
+/**
+ * WebSocket Server
+ */
 module.exports = class {
     
     constructor(server, routes) {
@@ -32,8 +35,5 @@ module.exports = class {
         console.log('pushed to wss clients '+message);
     }
 
-    test() {
-        console.log('test');
-    }
 }
 
