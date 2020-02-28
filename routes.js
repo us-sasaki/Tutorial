@@ -83,7 +83,6 @@ module.exports = class {
     setWebSocket(websocket) {
         this.websocket = websocket;
         console.log("setWebSocket:"+websocket);
-        this.websocket.test();
     }
 
     /**
