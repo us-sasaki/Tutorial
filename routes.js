@@ -2,11 +2,11 @@
 
 const path = require('path');
 const multer = require('multer');
+
 const ALLOWED_FILETYPE = ["html", "jpg"];
-const { promisify } = require('util');
 
 /**
- * サービスを設定
+ * endpoint 設定
  */
 module.exports = class {
 
@@ -16,6 +16,7 @@ module.exports = class {
     constructor(app) {
         this.app = app;
         this.websocket = null;
+        this.messageCallback = null;
         
         // for test
         app.route("/").get(function(req, res) {
@@ -61,13 +62,20 @@ module.exports = class {
             }
         });
 
+        this.receiveMessage = function() {
+            return new Promise( (res, rej) => {
+                this.messageCallback = function(msg) { res(msg) };
+            });
+        };
         // websock receiver
-        app.route('/notify').post( (req, res) => {
-            if (this.websocket !== null) this.websocket.notify(JSON.stringify(req.body));
-            // websocket から messageReceived が呼ばれたら post の response として返却
-            // promisify で Promise にして async, await する
-            res.json({response: "response"});
-
+        app.route('/notify').post( async (req, res) => {
+            if (this.websocket !== null) {
+                console.log("notifying");
+                this.websocket.notify(JSON.stringify(req.body));
+                const msg = await this.receiveMessage();
+                console.log("msg="+msg);
+                res.json({response: JSON.parse(msg)});
+            }
         });
 
     }
@@ -91,15 +99,21 @@ module.exports = class {
 
     setWebSocket(websocket) {
         this.websocket = websocket;
+        console.log("setWebSocket:"+websocket);
+        this.websocket.test();
     }
 
     /**
      * WebSocket からメッセージを受信したときに非同期に呼ばれます
      * 
-     * @param {string} message 
+     * @param {string} message
      */
     messageReceived(message) {
         console.log("received: "+message);
+        if (this.messageCallback) {
+            this.messageCallback(message);
+            console.log("sent message: "+message);
+        }
     }
 
 };

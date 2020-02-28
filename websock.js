@@ -14,7 +14,10 @@ module.exports = class {
         this.wss = new Server({ server });
         this.wss.on('connection', (ws) => {
             console.log('Client connected');
-            ws.on('message', (message) => routes.messageReceived(message));
+            ws.on('message', (message) => {
+                console.log("ws.on message");
+                this.routes.messageReceived(message);
+            });
             ws.on('close', () => console.log('Client disconnected'));
         });
 
@@ -27,6 +30,10 @@ module.exports = class {
             client.send(message);
         });
         console.log('pushed to wss clients '+message);
+    }
+
+    test() {
+        console.log('test');
     }
 }
 
