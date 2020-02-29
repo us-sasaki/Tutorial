@@ -2,6 +2,7 @@
 
 const path = require('path');
 const multer = require('multer');
+const lineVerify = require('./verify.js');
 const ALLOWED_FILETYPE = ['jpg', 'jpeg'];
 
 /**
@@ -20,21 +21,21 @@ module.exports = class {
         //
         // for test (/)
         //
-        app.route("/").get(function(req, res) {
+        app.route("/").get( (req, res) => {
             res.json( { message: {name: "value"}});
         });
 
         // 
         // Health check (/health, always up)
         //
-        app.route("/health").get(function(req, res) {
+        app.route("/health").get( (req, res) => {
             res.json({ status: "UP" });
         });
 
         //
         // Environment variables (/environment)
         //
-        app.route("/environment").get(function(req, res) {
+        app.route("/environment").get( (req, res) => {
             res.json({ port: process.env.PORT });
         });
 
@@ -66,6 +67,9 @@ module.exports = class {
             });
         };
         app.route('/notify').post( async (req, res) => {
+            if (!lineVerify(req)) {
+                res.json({response: "verification error"});
+            }
             if (this.websocket !== null) {
                 console.log("notifying");
                 this.websocket.notify(JSON.stringify(req.body));
