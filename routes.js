@@ -2,7 +2,7 @@
 
 const path = require('path');
 const multer = require('multer');
-const lineVerify = require('./verify.js');
+const lineVerify = require('./lineverify.js');
 const ALLOWED_FILETYPE = ['jpg', 'jpeg'];
 
 /**
@@ -102,7 +102,9 @@ module.exports = class {
         		const msg = await this.receiveMessage();
         		console.log("msg="+msg);
         		res.json({response: JSON.parse(msg)});
-        	}
+        	} else {
+                console.log('notified from slack, but no available websocks.');
+            }
         });
     }
 
