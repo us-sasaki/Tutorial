@@ -61,6 +61,7 @@ module.exports = class {
         //
         // webhook for LINE
         //
+        // websock からの通知を受け取りの Promise 化
         this.receiveMessage = function() {
             return new Promise( (res, rej) => {
                 this.messageCallback = function(msg) { res(msg) };
@@ -68,11 +69,13 @@ module.exports = class {
         };
         app.route('/notify').post( async (req, res) => {
             if (!lineVerify(req)) {
+                // LINE 署名検証
                 res.json({response: "verification error"});
             }
             if (this.websocket !== null) {
                 console.log("notifying");
                 this.websocket.notify(JSON.stringify(req.body));
+                // websocket での通知を待つ
                 const msg = await this.receiveMessage();
                 console.log("msg="+msg);
                 res.json({response: JSON.parse(msg)});
@@ -81,7 +84,26 @@ module.exports = class {
         app.route('/notify').get( (req, res) => {
             res.json({});
         });
-
+        
+        //
+        // webhook for Slack
+        //
+        app.route('/slack').post( async (req, res) => {
+        	// slack 署名検証はスキップ
+        	if (req.body.challenge) {
+        		// 初期登録時の Slack での Request URL 検証対応
+        		console.log('renpond to url verification');
+				res.setHeader('Content-Type', 'text/plain');
+				res.send(req.body.challenge);
+			} else if (this.websocket !== null) {
+        		console.log("notifying from slack");
+        		this.websocket.notify(JSON.stringify(req.body));
+        		// websocket での通知を待つ
+        		const msg = await this.receiveMessage();
+        		console.log("msg="+msg);
+        		res.json({response: JSON.parse(msg)});
+        	}
+        });
     }
 
 /*------------------
