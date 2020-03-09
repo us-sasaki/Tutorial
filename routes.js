@@ -49,12 +49,15 @@ module.exports = class {
         const upload = multer({ storage: storage });
         // app.use(express.static(path.join(__dirname, 'public')));
         app.post('/upload', upload.single('file'), (req, res) => {
+            console.log('heroku-uslineapp upload requested. file: '+req.file.originalname);
             const f = req.file.originalname;
             const ext = path.extname(f).substring(1);
             if (ALLOWED_FILETYPE.includes(ext)) {
                 res.send(f + 'ファイルのアップロードが完了しました。');
+                console.log('heroku-uslineapp uploaded. file='+f);
             } else {
                 res.send(f + 'は許容されないファイル種別です。許容されるもの'+ALLOWED_FILETYPE);
+                console.log('heroku-uslineapp upload rejected. file='+f);
             }
         });
 
@@ -68,21 +71,24 @@ module.exports = class {
             });
         };
         app.route('/notify').post( async (req, res) => {
+            console.log('heroku-uslineapp LINE-notify requested.');
             if (!lineVerify(req)) {
                 // LINE 署名検証
-                res.json({response: "verification error"});
+                res.json({response: "LINE verification error"});
             }
             if (this.websocket !== null) {
-                console.log("notifying");
+                console.log("heroku-uslineapp start to notify websock clients.");
                 this.websocket.notify(JSON.stringify(req.body));
                 // websocket での通知を待つ
                 const msg = await this.receiveMessage();
-                console.log("msg="+msg);
+                console.log("heroku-uslineapp received from websock clients. msg="+msg);
                 res.json({response: JSON.parse(msg)});
             }
         });
         app.route('/notify').get( (req, res) => {
+            console.log('heroku-uslineapp GET /notify requested.');
             res.json({});
+            console.log('heroku-uslineapp responded to GET /notify with empty data.');
         });
         
         //
@@ -92,18 +98,18 @@ module.exports = class {
         	// slack 署名検証はスキップ
         	if (req.body.challenge) {
         		// 初期登録時の Slack での Request URL 検証対応
-        		console.log('renpond to url verification');
+        		console.log('heroku-uslineapp renpond to url verification');
 				res.setHeader('Content-Type', 'text/plain');
 				res.send(req.body.challenge);
 			} else if (this.websocket !== null) {
-        		console.log("notifying from slack");
+        		console.log("heroku-uslineapp start to notify websock clients.");
         		this.websocket.notify(JSON.stringify(req.body));
         		// websocket での通知を待つ
         		const msg = await this.receiveMessage();
-        		console.log("msg="+msg);
+                //console.log("heroku-uslineapp received from websock clients. msg="+msg);
         		res.json({response: JSON.parse(msg)});
         	} else {
-                console.log('notified from slack, but no available websocks.');
+                console.log('heroku-uslineapp notified from slack, but no alive websocks.');
             }
         });
     }
@@ -113,7 +119,7 @@ module.exports = class {
  */
     setWebSocket(websocket) {
         this.websocket = websocket;
-        console.log("setWebSocket:"+websocket);
+        console.log("heroku-uslineapp setWebSocket:"+websocket);
     }
 
     /**
@@ -122,10 +128,10 @@ module.exports = class {
      * @param {string} message
      */
     messageReceived(message) {
-        console.log("received: "+message);
+        console.log("heroku-uslineapp received from WebSocket: "+message);
         if (this.messageCallback) {
             this.messageCallback(message);
-            console.log("sent message: "+message);
+            //console.log("heroku-uslineapp sent message to messageCallback: "+message);
         }
     }
 

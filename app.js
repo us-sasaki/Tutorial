@@ -21,5 +21,5 @@ const server = app.listen(port);
 // set Websocket server
 const websock = new Websock(server, routes);
 
-console.log(`node-uslineapp started on port `+port);
+console.log(`heroku-uslineapp started on port `+port);
 

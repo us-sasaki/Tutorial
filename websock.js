@@ -16,7 +16,7 @@ module.exports = class {
          */
         this.wss = new Server({ server });
         this.wss.on('connection', (ws) => {
-            console.log('Client connected');
+            console.log('heroku-uslineapp websock.js / Client connected');
             ws.on('message', (message) => {
                 console.log("ws.on message");
                 this.routes.messageReceived(message);
@@ -32,7 +32,7 @@ module.exports = class {
         this.wss.clients.forEach( (client) => {
             client.send(message);
         });
-        console.log('pushed to wss clients '+message);
+        //console.log('heroku-uslineapp websocket.js / pushed to wss clients '+message);
     }
 
 }
