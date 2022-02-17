@@ -1,16 +1,18 @@
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Person = void 0;
-class Person {
-    constructor(name) {
-        this.name = name;
+define(["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Person = void 0;
+    class Person {
+        constructor(name) {
+            this.name = name;
+        }
+        call() {
+            return this.name;
+        }
+        testPerson() {
+            return "test";
+        }
     }
-    call() {
-        return this.name;
-    }
-    testPerson() {
-        return "test";
-    }
-}
-exports.Person = Person;
+    exports.Person = Person;
+});
 //# sourceMappingURL=index.js.map
