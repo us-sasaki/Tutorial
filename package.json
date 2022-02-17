@@ -4,10 +4,6 @@
   "description": "test library",
   "main": "index.js",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://github.com:us-sasaki/Tutorial.git"
-  },
   "author": "us-sasaki",
   "license": "ISC",
   "dependencies": {}
